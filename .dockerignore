@@ -1,0 +1,14 @@
+**/*.md
+**/.env
+.cache
+assets
+node_modules
+.git
+.github
+!.github/scripts
+*.tsbuildinfo
+docker/compose
+docker/**/Dockerfile
+.vscode
+cypress
+test-workflows

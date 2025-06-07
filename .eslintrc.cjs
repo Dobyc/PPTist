@@ -12,9 +12,9 @@ module.exports = {
     ecmaVersion: 'latest'
   },
   rules: {
-    'curly': ['error', 'multi-line'],
+    // 'curly': ['error', 'multi-line'],
     'eqeqeq': ['error', 'always'],
-    'semi': ['error', 'never'],
+    // 'semi': ['error', 'never'],
     'indent': ['error', 2, { 
       'SwitchCase': 1,
     }],

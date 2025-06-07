@@ -6,42 +6,37 @@
       <span class="subtite" v-else-if="step === 'outline'">确认下方内容大纲（点击编辑内容，右键添加/删除大纲项），开始选择模板</span>
       <span class="subtite" v-else>在下方输入您的PPT主题，并适当补充信息，如行业、岗位、学科、用途等</span>
     </div>
-    
+
     <template v-if="step === 'setup'">
-      <Input class="input" 
-        ref="inputRef"
-        v-model:value="keyword" 
-        :maxlength="50" 
-        placeholder="请输入PPT主题，如：大学生职业生涯规划" 
-        @enter="createOutline()"
-      >
-        <template #suffix>
-          <span class="count">{{ keyword.length }} / 50</span>
-          <span class="language" v-tooltip="'切换语言'" @click="language = language === 'zh' ? 'en' : 'zh'">{{ language === 'zh' ? '中' : '英' }}</span>
-          <div class="submit" type="primary" @click="createOutline()"><IconSend class="icon" /> AI 生成</div>
-        </template>
+      <Input class="input" ref="inputRef" v-model:value="keyword" :maxlength="50" placeholder="请输入PPT主题，如：大学生职业生涯规划"
+        @enter="createOutline()">
+      <template #suffix>
+        <span class="count">{{ keyword.length }} / 50</span>
+        <span class="language" v-tooltip="'切换语言'" @click="language = language === 'zh' ? 'en' : 'zh'">{{ language ===
+          'zh' ? '中' : '英' }}</span>
+        <div class="submit" type="primary" @click="createOutline()">
+          <IconSend class="icon" /> AI 生成
+        </div>
+      </template>
       </Input>
       <div class="recommends">
-        <div class="recommend" v-for="(item, index) in recommends" :key="index" @click="setKeyword(item)">{{ item }}</div>
+        <div class="recommend" v-for="(item, index) in recommends" :key="index" @click="setKeyword(item)">{{ item }}
+        </div>
       </div>
       <div class="model-selector">
         <div class="label">选择AI模型：</div>
-        <Select 
-          style="width: 160px;"
-          v-model:value="model"
-          :options="[
-            { label: 'Doubao-1.5-Pro', value: 'doubao-1.5-pro-32k' },
-            { label: 'GLM-4-Flash', value: 'GLM-4-Flash' },
-            { label: 'GLM-4-Z1-Flash', value: 'GLM-4-Z1-Flash' },
-          ]"
-        />
+        <Select style="width: 160px;" v-model:value="appStore.model" :options="[
+          { label: 'Doubao-1.5-Pro', value: 'doubao-1.5-pro-32k' },
+          { label: 'GLM-4-Flash', value: 'GLM-4-Flash' },
+          { label: 'GLM-4-Z1-Flash', value: 'GLM-4-Z1-Flash' },
+        ]" />
       </div>
     </template>
     <div class="preview" v-if="step === 'outline'">
       <pre ref="outlineRef" v-if="outlineCreating">{{ outline }}</pre>
-       <div class="outline-view" v-else>
-         <OutlineEditor v-model:value="outline" />
-       </div>
+      <div class="outline-view" v-else>
+        <OutlineEditor v-model:value="outline" />
+      </div>
       <div class="btns" v-if="!outlineCreating">
         <Button class="btn" type="primary" @click="step = 'template'">选择模板</Button>
         <Button class="btn" @click="outline = ''; step = 'setup'">返回重新生成</Button>
@@ -49,12 +44,8 @@
     </div>
     <div class="select-template" v-if="step === 'template'">
       <div class="templates">
-        <div class="template" 
-          :class="{ 'selected': selectedTemplate === template.id }" 
-          v-for="template in templates" 
-          :key="template.id" 
-          @click="selectedTemplate = template.id"
-        >
+        <div class="template" :class="{ 'selected': selectedTemplate === template.id }" v-for="template in templates"
+          :key="template.id" @click="selectedTemplate = template.id">
           <img :src="template.cover" :alt="template.name">
         </div>
       </div>
@@ -76,13 +67,18 @@ import useAIPPT from '@/hooks/useAIPPT'
 import type { AIPPTSlide } from '@/types/AIPPT'
 import type { Slide } from '@/types/slides'
 import message from '@/utils/message'
-import { useMainStore, useSlidesStore } from '@/store'
+import { useAppStore, useMainStore, useSlidesStore } from '@/store'
 import Input from '@/components/Input.vue'
 import Button from '@/components/Button.vue'
 import Select from '@/components/Select.vue'
 import FullscreenSpin from '@/components/FullscreenSpin.vue'
 import OutlineEditor from '@/components/OutlineEditor.vue'
+import template1 from '@/assets/templates/template_1.json'
+import template2 from '@/assets/templates/template_2.json'
+import template3 from '@/assets/templates/template_3.json'
+import template4 from '@/assets/templates/template_4.json'
 
+const appStore = useAppStore()
 const mainStore = useMainStore()
 const { templates } = storeToRefs(useSlidesStore())
 const { AIPPT, getMdContent } = useAIPPT()
@@ -96,7 +92,19 @@ const outlineCreating = ref(false)
 const outlineRef = ref<HTMLElement>()
 const inputRef = ref<InstanceType<typeof Input>>()
 const step = ref<'setup' | 'outline' | 'template'>('setup')
-const model = ref('doubao-1.5-pro-32k')
+// const model = ref('doubao-1.5-pro-32k')
+interface TemplateType {
+  title: string;
+  width: number;
+  height: number;
+  slides: Slide[];
+}
+const sliderMap: Record<string, TemplateType> = {
+  'template_1': template1 as TemplateType,
+  'template_2': template2 as TemplateType,
+  'template_3': template3 as TemplateType,
+  'template_4': template4 as TemplateType,
+}
 
 const recommends = ref([
   '大学生职业生涯规划',
@@ -108,13 +116,17 @@ const recommends = ref([
   '社交媒体与品牌营销',
   '年度工作总结与展望',
   '区块链技术及其应用',
-]) 
+])
 
 onMounted(() => {
   setTimeout(() => {
     inputRef.value!.focus()
   }, 500)
 })
+
+const handleChangeModel = (value: string) => {
+  appStore.setModel(value)
+}
 
 const setKeyword = (value: string) => {
   keyword.value = value
@@ -126,15 +138,15 @@ const createOutline = async () => {
 
   loading.value = true
   outlineCreating.value = true
-  
-  const stream = await api.AIPPT_Outline(keyword.value, language.value, model.value)
+
+  const stream = await api.AIPPT_Outline(keyword.value, language.value, appStore.model)
 
   loading.value = false
   step.value = 'outline'
 
   const reader: ReadableStreamDefaultReader = stream.body.getReader()
   const decoder = new TextDecoder('utf-8')
-  
+
   const readStream = () => {
     reader.read().then(({ done, value }) => {
       if (done) {
@@ -142,7 +154,7 @@ const createOutline = async () => {
         outlineCreating.value = false
         return
       }
-  
+
       const chunk = decoder.decode(value, { stream: true })
       outline.value += chunk
 
@@ -159,12 +171,13 @@ const createOutline = async () => {
 const createPPT = async () => {
   loading.value = true
 
-  const stream = await api.AIPPT(outline.value, language.value, 'doubao-1.5-pro-32k')
-  const templateSlides: Slide[] = await api.getFileData(selectedTemplate.value).then(ret => ret.slides)
+  const stream = await api.AIPPT(outline.value, language.value, appStore.model)
+  // const templateSlides: Slide[] = await api.getFileData(selectedTemplate.value).then(ret => ret.slides)
+  const templateSlides: Slide[] = sliderMap[selectedTemplate.value].slides
 
   const reader: ReadableStreamDefaultReader = stream.body.getReader()
   const decoder = new TextDecoder('utf-8')
-  
+
   const readStream = () => {
     reader.read().then(({ done, value }) => {
       if (done) {
@@ -172,7 +185,7 @@ const createPPT = async () => {
         mainStore.setAIPPTDialogState(false)
         return
       }
-  
+
       const chunk = decoder.decode(value, { stream: true })
       try {
         const slide: AIPPTSlide = JSON.parse(chunk)
@@ -195,6 +208,7 @@ const createPPT = async () => {
   margin: -20px;
   padding: 30px;
 }
+
 .header {
   margin-bottom: 12px;
 
@@ -208,11 +222,13 @@ const createPPT = async () => {
     vertical-align: text-bottom;
     line-height: 1.1;
   }
+
   .subtite {
     color: #888;
     font-size: 12px;
   }
 }
+
 .preview {
   pre {
     max-height: 450px;
@@ -221,6 +237,7 @@ const createPPT = async () => {
     background-color: #f1f1f1;
     overflow: auto;
   }
+
   .outline-view {
     max-height: 450px;
     padding: 10px;
@@ -228,6 +245,7 @@ const createPPT = async () => {
     background-color: #f1f1f1;
     overflow: auto;
   }
+
   .btns {
     display: flex;
     justify-content: center;
@@ -239,12 +257,13 @@ const createPPT = async () => {
     }
   }
 }
+
 .select-template {
   .templates {
     display: flex;
     margin-bottom: 10px;
     @include flex-grid-layout();
-  
+
     .template {
       border: 2px solid $borderColor;
       border-radius: $borderRadius;
@@ -259,12 +278,13 @@ const createPPT = async () => {
       &.selected {
         border-color: $themeColor;
       }
-  
+
       img {
         width: 100%;
       }
     }
   }
+
   .btns {
     display: flex;
     justify-content: center;
@@ -276,6 +296,7 @@ const createPPT = async () => {
     }
   }
 }
+
 .configs {
   margin-top: 5px;
   display: flex;
@@ -284,10 +305,12 @@ const createPPT = async () => {
   .items {
     display: flex;
   }
+
   .item {
     margin-right: 5px;
   }
 }
+
 .recommends {
   display: flex;
   flex-wrap: wrap;
@@ -307,23 +330,27 @@ const createPPT = async () => {
     }
   }
 }
+
 .model-selector {
   margin-top: 10px;
   font-size: 13px;
   display: flex;
   align-items: center;
 }
+
 .count {
   font-size: 12px;
   color: #999;
   margin-right: 10px;
 }
+
 .language {
   font-size: 12px;
   margin-right: 10px;
   color: $themeColor;
   cursor: pointer;
 }
+
 .submit {
   height: 20px;
   font-size: 12px;

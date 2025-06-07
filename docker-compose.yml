@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  # 开发环境服务
+  dev:
+    build:
+      context: .
+      target: development
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+
+  # 生产环境服务
+  prod:
+    build:
+      context: .
+      target: production
+    ports:
+      - "5679:5679"
+    environment:
+      - NODE_ENV=production

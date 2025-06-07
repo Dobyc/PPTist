@@ -4,7 +4,7 @@
     <Editor v-else-if="_isPC" />
     <Mobile v-else />
   </template>
-  <FullscreenSpin tip="数据初始化中，请稍等 ..." v-else  loading :mask="false" />
+  <FullscreenSpin tip="数据初始化中，请稍等 ..." v-else loading :mask="false" />
 </template>
 
 
@@ -32,6 +32,7 @@ const slidesStore = useSlidesStore()
 const snapshotStore = useSnapshotStore()
 const { databaseId } = storeToRefs(mainStore)
 const { slides } = storeToRefs(slidesStore)
+// 是否处于ppt放映状态
 const { screening } = storeToRefs(useScreenStore())
 
 if (import.meta.env.MODE !== 'development') {
@@ -46,9 +47,20 @@ onMounted(async () => {
     })
   }
   else {
-    api.getFileData('slides').then((slides: Slide[]) => {
-      slidesStore.setSlides(slides)
-    })
+    // api.getFileData('slides').then((slides: Slide[]) => {
+    //   slidesStore.setSlides(slides)
+    // })
+    const slides: Slide[] = [
+      {
+        "id": "test-slide-1",
+        "elements": [],
+        "background": {
+          "type": "solid",
+          "color": "#ffffff"
+        }
+      },
+    ]
+    slidesStore.setSlides(slides)
   }
 
   await deleteDiscardedDB()
