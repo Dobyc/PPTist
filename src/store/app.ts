@@ -6,7 +6,7 @@ export interface AppState {
 
 export const useAppStore = defineStore('app', {
   state: (): AppState => ({
-    model: 'doubao-1.5-pro-32k', // 是否进入放映状态
+    model: 'GLM-4-Flash', // 是否进入放映状态
   }),
 
   actions: {

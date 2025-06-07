@@ -26,7 +26,7 @@
       <div class="model-selector">
         <div class="label">选择AI模型：</div>
         <Select style="width: 160px;" v-model:value="appStore.model" :options="[
-          { label: 'Doubao-1.5-Pro', value: 'doubao-1.5-pro-32k' },
+          // { label: 'Doubao-1.5-Pro', value: 'doubao-1.5-pro-32k' },
           { label: 'GLM-4-Flash', value: 'GLM-4-Flash' },
           { label: 'GLM-4-Z1-Flash', value: 'GLM-4-Z1-Flash' },
         ]" />
@@ -151,6 +151,7 @@ const createOutline = async () => {
     reader.read().then(({ done, value }) => {
       if (done) {
         outline.value = getMdContent(outline.value)
+        outline.value = outline.value.replace(/<!--[\s\S]*?-->/g, '').replace(/<think>[\s\S]*?<\/think>/g, '')
         outlineCreating.value = false
         return
       }
