@@ -14,7 +14,7 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'https://server.pptist.cn',
+        target: 'http://localhost:4000/ppt',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       }

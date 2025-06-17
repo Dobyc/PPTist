@@ -18,7 +18,7 @@ export default {
     language: string,
     model: string,
   ): Promise<any> {
-    return fetch(`${SERVER_URL}/tools/aippt_outline`, {
+    return fetch(`${SERVER_URL}/outline`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -37,7 +37,7 @@ export default {
     language: string,
     model: string,
   ): Promise<any> {
-    return fetch(`${SERVER_URL}/tools/aippt`, {
+    return fetch(`${SERVER_URL}/aippt`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

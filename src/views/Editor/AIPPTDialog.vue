@@ -27,8 +27,7 @@
         <div class="label">选择AI模型：</div>
         <Select style="width: 160px;" v-model:value="appStore.model" :options="[
           // { label: 'Doubao-1.5-Pro', value: 'doubao-1.5-pro-32k' },
-          { label: 'GLM-4-Flash', value: 'GLM-4-Flash' },
-          { label: 'GLM-4-Z1-Flash', value: 'GLM-4-Z1-Flash' },
+          { label: 'deepseek-chat', value: 'deepseek-chat' },
         ]" />
       </div>
     </template>
